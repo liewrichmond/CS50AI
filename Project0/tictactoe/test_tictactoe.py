@@ -143,12 +143,20 @@ def test_max_value_base_case():
 
 def test_max_value():
     board = [["X", EMPTY, "X"],
-            ["O", "O", "X"],
-            [EMPTY, "X", "O"]]
+             ["O", "O", "X"],
+             [EMPTY, "X", "O"]]
     assert ttt.max_value(board) == 1
+
 
 def test_min_value():
     board = [["X", EMPTY, "X"],
              ["O", "O", "X"],
              [EMPTY, "X", "O"]]
     assert ttt.min_value(board) == 0
+
+
+def test_minimax():
+    board = [["X", "O", "X"],
+             ["X", "O", EMPTY],
+             ["O", EMPTY, "X"]]
+    assert ttt.minimax(board) == (2,1)
