@@ -186,9 +186,9 @@ def minimax(board):
         # Max player
         for action in actions(board):
             potentialResult = min_value(result(board, action), tracker)
-            bestResult = max(bestResult, potentialResult)
             tracker.alpha = max(tracker.alpha, potentialResult)
-            if bestResult == potentialResult:
+            if bestResult < potentialResult:
+                bestResult = potentialResult
                 bestAction = action
             if tracker.alpha > tracker.beta:
                 break
@@ -196,10 +196,10 @@ def minimax(board):
         bestResult = math.inf
         # Min player
         for action in actions(board):
-            potentialResult = max_value(result(board, action), tracker)
-            bestResult = min(bestResult, potentialResult)
+            potentialResult = max_value(result(board, action), tracker)            
             tracker.beta = min(tracker.beta, potentialResult)
-            if bestResult == potentialResult:
+            if bestResult > potentialResult:
+                bestResult = potentialResult
                 bestAction = action
             if tracker.beta < tracker.alpha:
                 break
