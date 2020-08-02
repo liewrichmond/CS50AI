@@ -154,6 +154,12 @@ def test_min_value():
              [EMPTY, "X", "O"]]
     assert ttt.min_value(board) == 0
 
+def test_min_value_2():
+    board = [[EMPTY, "O", EMPTY],
+             [EMPTY, "X", EMPTY],
+             ["X", EMPTY, EMPTY]]
+    assert ttt.max_value(board) == 1
+
 
 def test_minimax():
     board = [["X", "O", "X"],
