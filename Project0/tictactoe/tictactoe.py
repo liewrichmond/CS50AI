@@ -179,7 +179,7 @@ def minimax(board):
         # Max player
         for action in actions(board):
             potentialResult = min_value(result(board,action)) 
-            if bestResult <= potentialResult:
+            if bestResult < potentialResult:
                 bestResult = potentialResult
                 bestAction = action
     elif player(board) == O:
@@ -187,7 +187,7 @@ def minimax(board):
         # Min player
         for action in actions(board):
             potentialResult = max_value(result(board,action))
-            if bestResult >= potentialResult:
+            if bestResult > potentialResult:
                 bestResult = potentialResult
                 bestAction = action
     return bestAction

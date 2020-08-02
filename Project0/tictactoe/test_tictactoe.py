@@ -160,3 +160,9 @@ def test_minimax():
              ["X", "O", EMPTY],
              ["O", EMPTY, "X"]]
     assert ttt.minimax(board) == (2,1)
+
+def test_minimax_blocks_move_2():
+    board = [[EMPTY, EMPTY, EMPTY],
+             ["O", "X", EMPTY],
+             [EMPTY, "X", EMPTY]]
+    assert ttt.minimax(board) == (0, 1)
