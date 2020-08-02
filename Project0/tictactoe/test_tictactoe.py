@@ -1,6 +1,7 @@
 import tictactoe as ttt
 import pytest
 import copy
+import math
 
 EMPTY = None
 
@@ -133,30 +134,38 @@ def test_result_throws_error():
     with pytest.raises(ValueError):
         ttt.result(board, (1, 1))
 
+alpha = -math.inf
+beta = math.inf
 
 def test_max_value_base_case():
     board = [["X", "O", "X"],
              ["O", "O", "O"],
              ["X", EMPTY, "X"]]
-    assert ttt.max_value(board) == -1
+    assert ttt.max_value(board, alpha, beta) == -1
 
 
 def test_max_value():
     board = [["X", EMPTY, "X"],
              ["O", "O", "X"],
              [EMPTY, "X", "O"]]
-    assert ttt.max_value(board) == 1
+    assert ttt.max_value(board,  alpha, beta) == 1
 
 
 def test_min_value():
     board = [["X", EMPTY, "X"],
              ["O", "O", "X"],
              [EMPTY, "X", "O"]]
-    assert ttt.min_value(board) == 0
+    assert ttt.min_value(board,  alpha, beta) == 0
 
 
-def test_minimax():
+def test_minimax_blocks_move():
     board = [["X", "O", "X"],
              ["X", "O", EMPTY],
              ["O", EMPTY, "X"]]
-    assert ttt.minimax(board) == (2,1)
+    assert ttt.minimax(board) == (2, 1)
+
+def test_minimax_blocks_move_2():
+    board = [[EMPTY, EMPTY, EMPTY],
+             ["O", "X", EMPTY],
+             [EMPTY, "X", EMPTY]]
+    assert ttt.minimax(board) == (0, 1)

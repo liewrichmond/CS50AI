@@ -174,37 +174,53 @@ def minimax(board):
     Returns the optimal action for the current player on the board.
     """
     bestAction = ()
+    alpha = -math.inf
+    beta = math.inf
     if player(board) == X:
-        bestResult = -math.inf
         # Max player
         for action in actions(board):
-            potentialResult = min_value(result(board,action)) 
-            if bestResult <= potentialResult:
-                bestResult = potentialResult
+            bestResult = -math.inf
+            potentialResult = min_value(result(board,action), alpha, beta) 
+            bestResult = max(bestResult, potentialResult)
+            alpha = max(alpha, potentialResult)
+            if bestResult == potentialResult:
                 bestAction = action
+            if alpha >= beta:
+                break
     elif player(board) == O:
         bestResult = math.inf
         # Min player
         for action in actions(board):
-            potentialResult = max_value(result(board,action))
-            if bestResult >= potentialResult:
-                bestResult = potentialResult
+            potentialResult = max_value(result(board,action), alpha, beta)
+            bestResult = min(bestResult, potentialResult)
+            beta = min(beta, potentialResult)
+            if bestResult == potentialResult:
                 bestAction = action
+            if beta <= alpha:
+                break
     return bestAction
 
-def max_value(board):
+def max_value(board, alpha, beta):
     if terminal(board) == True:
         return utility(board)
     v = -math.inf
     for action in actions(board):
-        v = max(v, min_value(result(board, action)))
+        eval = min_value(result(board, action), alpha, beta)
+        v = max(v, eval)
+        alpha = max(alpha, eval)
+        if alpha >= beta:
+            break
     return v
 
 
-def min_value(board):
+def min_value(board, alpha, beta):
     if terminal(board) == True:
         return utility(board)
     v = math.inf
     for action in actions(board):
-        v = min(v, max_value(result(board, action)))
+        eval = max_value(result(board,action), alpha, beta)
+        v = min(v, eval)
+        beta = min(beta, eval)
+        if beta <= alpha:
+            break
     return v
