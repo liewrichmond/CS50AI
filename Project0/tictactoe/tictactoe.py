@@ -9,6 +9,10 @@ X = "X"
 O = "O"
 EMPTY = None
 
+class Tracker():
+    def __init__(self, alpha, beta):
+        self.alpha = alpha
+        self.beta = beta
 
 def initial_state():
     """
@@ -176,51 +180,53 @@ def minimax(board):
     bestAction = ()
     alpha = -math.inf
     beta = math.inf
+    tracker = Tracker(alpha, beta)
     if player(board) == X:
+        bestResult = -math.inf
         # Max player
         for action in actions(board):
-            bestResult = -math.inf
-            potentialResult = min_value(result(board,action), alpha, beta) 
+            potentialResult = min_value(result(board, action), tracker)
             bestResult = max(bestResult, potentialResult)
-            alpha = max(alpha, potentialResult)
+            tracker.alpha = max(tracker.alpha, potentialResult)
             if bestResult == potentialResult:
                 bestAction = action
-            if alpha >= beta:
+            if tracker.alpha > tracker.beta:
                 break
     elif player(board) == O:
         bestResult = math.inf
         # Min player
         for action in actions(board):
-            potentialResult = max_value(result(board,action), alpha, beta)
+            potentialResult = max_value(result(board, action), tracker)
             bestResult = min(bestResult, potentialResult)
-            beta = min(beta, potentialResult)
+            tracker.beta = min(tracker.beta, potentialResult)
             if bestResult == potentialResult:
                 bestAction = action
-            if beta <= alpha:
+            if tracker.beta < tracker.alpha:
                 break
     return bestAction
 
-def max_value(board, alpha, beta):
+
+def max_value(board, tracker):
     if terminal(board) == True:
         return utility(board)
     v = -math.inf
     for action in actions(board):
-        eval = min_value(result(board, action), alpha, beta)
+        eval = min_value(result(board, action), tracker)
         v = max(v, eval)
-        alpha = max(alpha, eval)
-        if alpha >= beta:
+        tracker.alpha = max(tracker.alpha, eval)
+        if tracker.alpha > tracker.beta:
             break
     return v
 
 
-def min_value(board, alpha, beta):
+def min_value(board, tracker):
     if terminal(board) == True:
         return utility(board)
     v = math.inf
     for action in actions(board):
-        eval = max_value(result(board,action), alpha, beta)
+        eval = max_value(result(board, action),tracker)
         v = min(v, eval)
-        beta = min(beta, eval)
-        if beta <= alpha:
+        tracker.beta = min(tracker.beta, eval)
+        if tracker.beta < tracker.alpha:
             break
     return v
