@@ -134,34 +134,31 @@ def test_result_throws_error():
     with pytest.raises(ValueError):
         ttt.result(board, (1, 1))
 
-
-tracker = ttt.Tracker(-math.inf, math.inf)
-
 def test_max_value_base_case():
     board = [["X", "O", "X"],
              ["O", "O", "O"],
              ["X", EMPTY, "X"]]
-    assert ttt.max_value(board, tracker) == -1
+    assert ttt.max_value(board, -math.inf, math.inf) == -1
 
 
 def test_max_value():
     board = [["X", EMPTY, "X"],
              ["O", "O", "X"],
              [EMPTY, "X", "O"]]
-    assert ttt.max_value(board,  tracker) == 1
+    assert ttt.max_value(board,  -math.inf, math.inf) == 1
 
 def test_max_value_2():
     board = [[EMPTY, "O", EMPTY],
              [EMPTY, "X", EMPTY],
              ["X", EMPTY, EMPTY]]
-    assert ttt.max_value(board,  tracker) == 1
+    assert ttt.max_value(board,  -math.inf, math.inf) == 1
 
 
 def test_min_value():
     board = [["X", EMPTY, "X"],
              ["O", "O", "X"],
              [EMPTY, "X", "O"]]
-    assert ttt.min_value(board, tracker) == 0
+    assert ttt.min_value(board, -math.inf, math.inf) == 0
 
 def test_minimax_blocks_move():
     board = [["X", "O", "X"],
