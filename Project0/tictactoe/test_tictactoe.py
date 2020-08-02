@@ -160,38 +160,19 @@ def test_min_value():
              [EMPTY, "X", "O"]]
     assert ttt.min_value(board, -math.inf, math.inf) == 0
 
-<<<<<<< HEAD
-def test_min_value_2():
-    board = [[EMPTY, "O", EMPTY],
-             [EMPTY, "X", EMPTY],
-             ["X", EMPTY, EMPTY]]
-    assert ttt.max_value(board) == 1
-
-
-def test_minimax():
-    board = [["X", "O", "X"],
-             ["X", "O", EMPTY],
-             ["O", EMPTY, "X"]]
-    assert ttt.minimax(board) == (2,1)
-=======
 def test_minimax_blocks_move():
     board = [["X", "O", "X"],
              ["X", "O", EMPTY],
              ["O", EMPTY, "X"]]
     assert ttt.minimax(board) == (2, 1)
 
->>>>>>> working
 
 def test_minimax_blocks_move_2():
     board = [[EMPTY, EMPTY, EMPTY],
              ["O", "X", EMPTY],
              [EMPTY, "X", EMPTY]]
     assert ttt.minimax(board) == (0, 1)
-<<<<<<< HEAD
     
-=======
-
->>>>>>> working
 def test_minimax_blocks_move_3():
     board = [[EMPTY, "O", EMPTY],
              [EMPTY, "X", EMPTY],
