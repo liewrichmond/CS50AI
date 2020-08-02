@@ -1,6 +1,7 @@
 import tictactoe as ttt
 import pytest
 import copy
+import math
 
 EMPTY = None
 
@@ -133,27 +134,33 @@ def test_result_throws_error():
     with pytest.raises(ValueError):
         ttt.result(board, (1, 1))
 
-
 def test_max_value_base_case():
     board = [["X", "O", "X"],
              ["O", "O", "O"],
              ["X", EMPTY, "X"]]
-    assert ttt.max_value(board) == -1
+    assert ttt.max_value(board, -math.inf, math.inf) == -1
 
 
 def test_max_value():
     board = [["X", EMPTY, "X"],
              ["O", "O", "X"],
              [EMPTY, "X", "O"]]
-    assert ttt.max_value(board) == 1
+    assert ttt.max_value(board,  -math.inf, math.inf) == 1
+
+def test_max_value_2():
+    board = [[EMPTY, "O", EMPTY],
+             [EMPTY, "X", EMPTY],
+             ["X", EMPTY, EMPTY]]
+    assert ttt.max_value(board,  -math.inf, math.inf) == 1
 
 
 def test_min_value():
     board = [["X", EMPTY, "X"],
              ["O", "O", "X"],
              [EMPTY, "X", "O"]]
-    assert ttt.min_value(board) == 0
+    assert ttt.min_value(board, -math.inf, math.inf) == 0
 
+<<<<<<< HEAD
 def test_min_value_2():
     board = [[EMPTY, "O", EMPTY],
              [EMPTY, "X", EMPTY],
@@ -166,13 +173,25 @@ def test_minimax():
              ["X", "O", EMPTY],
              ["O", EMPTY, "X"]]
     assert ttt.minimax(board) == (2,1)
+=======
+def test_minimax_blocks_move():
+    board = [["X", "O", "X"],
+             ["X", "O", EMPTY],
+             ["O", EMPTY, "X"]]
+    assert ttt.minimax(board) == (2, 1)
+
+>>>>>>> working
 
 def test_minimax_blocks_move_2():
     board = [[EMPTY, EMPTY, EMPTY],
              ["O", "X", EMPTY],
              [EMPTY, "X", EMPTY]]
     assert ttt.minimax(board) == (0, 1)
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> working
 def test_minimax_blocks_move_3():
     board = [[EMPTY, "O", EMPTY],
              [EMPTY, "X", EMPTY],
