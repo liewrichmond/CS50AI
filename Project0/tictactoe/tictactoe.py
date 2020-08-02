@@ -190,7 +190,7 @@ def minimax(board):
             if bestResult < potentialResult:
                 bestResult = potentialResult
                 bestAction = action
-            if tracker.alpha > tracker.beta:
+            if tracker.beta < tracker.alpha:
                 break
     elif player(board) == O:
         bestResult = math.inf
@@ -214,7 +214,7 @@ def max_value(board, tracker):
         eval = min_value(result(board, action), tracker)
         v = max(v, eval)
         tracker.alpha = max(tracker.alpha, eval)
-        if tracker.beta <= tracker.alpha:
+        if tracker.beta < tracker.alpha:
             break
     return v
 
@@ -227,6 +227,6 @@ def min_value(board, tracker):
         eval = max_value(result(board, action),tracker)
         v = min(v, eval)
         tracker.beta = min(tracker.beta, eval)
-        if tracker.beta <= tracker.alpha:
+        if tracker.beta < tracker.alpha:
             break
     return v
