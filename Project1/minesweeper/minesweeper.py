@@ -94,6 +94,12 @@ class Sentence():
     def __init__(self, cells, count):
         self.cells = set(cells)
         self.count = count
+        self.safeCells = set()
+        if count == 0:
+            self.safeCells.add(cells)
+        self.dangerCells = set()
+        if len(cells) == 1 and count == 1:
+            self.dangerCells.add(cells)
 
     def __eq__(self, other):
         return self.cells == other.cells and self.count == other.count
@@ -105,20 +111,29 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be mines.
         """
-        raise NotImplementedError
+        return self.dangerCells
 
     def known_safes(self):
         """
         Returns the set of all cells in self.cells known to be safe.
         """
-        raise NotImplementedError
+        if self.count == 0:
+            return self.cells
 
     def mark_mine(self, cell):
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be a mine.
         """
-        raise NotImplementedError
+        if self.count == 0 :
+            raise ValueError
+        s = set()
+        s.add(cell)
+        if len(self.cells.intersection(s)) != 0 and self.count > 0:
+            self.cells.remove(cell)
+            self.count -= 1
+            self.dangerCells.add(cell)
+        return
 
     def mark_safe(self, cell):
         """
@@ -182,7 +197,36 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
+        self.moves_made.add(cell)
+        self.safes.add(cell)
+        neighbors = self.getNeighbors(cell)
+        newKnowledge = Sentence(neighbors, count)
+        self.knowledge.append(newKnowledge)
+        # self.updateKnowledge()
+
         raise NotImplementedError
+
+    def getNeighbors(self, cell):
+        if cell[0] < 0 or cell[1] < 0 :
+            raise ValueError
+        startingRow = cell[0] - 1 
+        startingCol = cell[1] - 1
+        neighbors = set()
+        middleCoord = (startingRow + 1, startingCol + 1)
+        for row in range(startingRow, startingRow + 3):
+            for col in range(startingCol, startingCol + 3):
+                coord  = (row, col)
+                if self.isValidCoord(coord) and coord != middleCoord:
+                    neighbors.add(coord)
+        return neighbors
+
+    def isValidCoord(self, coord):
+        if coord[0] < 0 or coord[1] < 0:
+            return False
+        elif coord[0] >= self.height or coord[1] >= self.width:
+            return False
+        return True
+    
 
     def make_safe_move(self):
         """
