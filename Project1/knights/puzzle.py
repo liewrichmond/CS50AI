@@ -42,8 +42,7 @@ knowledge2 = And(
     Biconditional(Not(bSays), BKnave),
     Biconditional(bSays, BKnight),
 )
-knowledge2.add(Not(And(AKnave, BKnave, aSays)))
-knowledge2.add(Not(And(BKnave, AKnight, bSays)))
+
 
 # Puzzle 3
 # A says either "I am a knight." or "I am a knave.", but you don't know which.
