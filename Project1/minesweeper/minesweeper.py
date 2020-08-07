@@ -94,12 +94,6 @@ class Sentence():
     def __init__(self, cells, count):
         self.cells = set(cells)
         self.count = count
-        self.safeCells = set()
-        if count == 0:
-            self.safeCells = self.safeCells.union(cells)
-        self.dangerCells = set()
-        if len(cells) == 1 and count == 1:
-            self.dangerCells = self.dangerCells.union(cells)
 
     def __eq__(self, other):
         return self.cells == other.cells and self.count == other.count
@@ -111,7 +105,9 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be mines.
         """
-        return self.dangerCells
+        if len(self.cells) == self.count:
+            return self.cells
+        return set()
 
     def known_safes(self):
         """
@@ -119,20 +115,18 @@ class Sentence():
         """
         if self.count == 0:
             return self.cells
+        return set()
 
     def mark_mine(self, cell):
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be a mine.
         """
-        if self.count == 0 :
-            raise ValueError
         s = set()
         s.add(cell)
         if len(self.cells.intersection(s)) != 0 and self.count > 0:
             self.cells.remove(cell)
             self.count -= 1
-            self.dangerCells.add(cell)
         return
 
     def mark_safe(self, cell):
@@ -140,7 +134,16 @@ class Sentence():
         Updates internal knowledge representation given the fact that
         a cell is known to be safe.
         """
-        raise NotImplementedError
+        s = set()
+        s.add(cell)
+        if len(self.cells.intersection(s)) == 0 or self.count == 0:
+            return
+        self.cells.remove(cell)
+    
+    def is_empty(self):
+        if len(self.cells) == 0:
+            return True
+        return False
 
 
 class MinesweeperAI():
@@ -200,10 +203,27 @@ class MinesweeperAI():
         self.moves_made.add(cell)
         self.mark_safe(cell)
         neighbors = self.get_neighbors(cell)
-        newKnowledge = Sentence(neighbors, count)
-        self.knowledge.append(newKnowledge)
-        self.updateKnowledge()
+        #remove known safe cells/moves made
+        neighbors.difference_update(self.safes)
+        count -= len(neighbors.intersection(self.mines))
+        neighbors.difference_update(self.mines)
+        self.knowledge.append(Sentence(neighbors, count))
+        self.update_knowledge()
+        print(self.mines)
 
+    def update_knowledge(self):
+        for sentence in self.knowledge:
+            mines = sentence.known_mines()
+            new_mines = mines.difference(self.mines)
+            if len(new_mines) != 0:
+                for mine in new_mines:
+                    self.mark_mine(mine)
+            safes = sentence.known_safes()
+            new_safes = safes.difference(self.safes)
+            if len(new_safes) != 0:
+                for safe in new_safes:
+                    self.mark_safe(safe)
+            
     def get_neighbors(self, cell):
         if cell[0] < 0 or cell[1] < 0 :
             raise ValueError
@@ -234,7 +254,12 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        safe_moves = self.safes.difference(self.moves_made)
+        try:
+            return safe_moves.pop()
+        except KeyError:
+            return None
+
 
     def make_random_move(self):
         """
@@ -243,4 +268,12 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        valid_moves = set()
+        for row in range(0, self.height):
+            for col in range(0, self.width):
+                valid_moves.add((row,col))
+        try:
+            return valid_moves.difference(self.moves_made).difference(self.mines).pop()
+        except KeyError:
+            return None
+            
