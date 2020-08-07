@@ -96,10 +96,10 @@ class Sentence():
         self.count = count
         self.safeCells = set()
         if count == 0:
-            self.safeCells.add(cells)
+            self.safeCells = self.safeCells.union(cells)
         self.dangerCells = set()
         if len(cells) == 1 and count == 1:
-            self.dangerCells.add(cells)
+            self.dangerCells = self.dangerCells.union(cells)
 
     def __eq__(self, other):
         return self.cells == other.cells and self.count == other.count
@@ -198,29 +198,26 @@ class MinesweeperAI():
                if they can be inferred from existing knowledge
         """
         self.moves_made.add(cell)
-        self.safes.add(cell)
-        neighbors = self.getNeighbors(cell)
+        self.mark_safe(cell)
+        neighbors = self.get_neighbors(cell)
         newKnowledge = Sentence(neighbors, count)
         self.knowledge.append(newKnowledge)
-        # self.updateKnowledge()
+        self.updateKnowledge()
 
-        raise NotImplementedError
-
-    def getNeighbors(self, cell):
+    def get_neighbors(self, cell):
         if cell[0] < 0 or cell[1] < 0 :
             raise ValueError
         startingRow = cell[0] - 1 
         startingCol = cell[1] - 1
         neighbors = set()
-        middleCoord = (startingRow + 1, startingCol + 1)
         for row in range(startingRow, startingRow + 3):
             for col in range(startingCol, startingCol + 3):
                 coord  = (row, col)
-                if self.isValidCoord(coord) and coord != middleCoord:
+                if self.is_valid_coord(coord) and coord != cell:
                     neighbors.add(coord)
         return neighbors
 
-    def isValidCoord(self, coord):
+    def is_valid_coord(self, coord):
         if coord[0] < 0 or coord[1] < 0:
             return False
         elif coord[0] >= self.height or coord[1] >= self.width:

@@ -23,27 +23,27 @@ def test_mark_mine_decrements_count():
 
 def testGetNeighborsTopLeftCorner():
         ai = MinesweeperAI()
-        neighbors = ai.getNeighbors((0,0))
+        neighbors = ai.get_neighbors((0,0))
         assert neighbors == {(0,1), (1,0), (1,1)}
 
 def testGetNeighborsTopRightCorner():
         ai = MinesweeperAI()
-        neighbors = ai.getNeighbors((0,7))
+        neighbors = ai.get_neighbors((0,7))
         assert neighbors == {(0,6), (1,6), (1,7)}
 
 def testGetNeighborsBottomLeftCorner():
         ai = MinesweeperAI()
-        neighbors = ai.getNeighbors((7,0))
+        neighbors = ai.get_neighbors((7,0))
         assert neighbors == {(6,0), (6,1), (7,1)}
 
 def testGetNeighborsBottomRighttCorner():
         ai = MinesweeperAI()
-        neighbors = ai.getNeighbors((7,7))
+        neighbors = ai.get_neighbors((7,7))
         assert neighbors == {(6,7), (6,6), (7,6)}
 
 def testGetNeighborsMiddle():
         ai = MinesweeperAI()
-        neighbors = ai.getNeighbors((3,3))
+        neighbors = ai.get_neighbors((3,3))
         assert neighbors == {(2,2), (2,3), (2,4), (3,2), (3,4), (4,2), (4,3), (4,4)}
 
 
