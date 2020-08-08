@@ -139,7 +139,7 @@ class Sentence():
         if len(self.cells.intersection(s)) == 0 or self.count == 0:
             return
         self.cells.remove(cell)
-    
+
     def is_empty(self):
         if len(self.cells) == 0:
             return True
@@ -203,13 +203,12 @@ class MinesweeperAI():
         self.moves_made.add(cell)
         self.mark_safe(cell)
         neighbors = self.get_neighbors(cell)
-        #remove known safe cells/moves made
+        # remove known safe cells/moves made
         neighbors.difference_update(self.safes)
         count -= len(neighbors.intersection(self.mines))
         neighbors.difference_update(self.mines)
         self.knowledge.append(Sentence(neighbors, count))
         self.update_knowledge()
-        print(self.mines)
 
     def update_knowledge(self):
         for sentence in self.knowledge:
@@ -223,16 +222,16 @@ class MinesweeperAI():
             if len(new_safes) != 0:
                 for safe in new_safes:
                     self.mark_safe(safe)
-            
+
     def get_neighbors(self, cell):
-        if cell[0] < 0 or cell[1] < 0 :
+        if cell[0] < 0 or cell[1] < 0:
             raise ValueError
-        startingRow = cell[0] - 1 
+        startingRow = cell[0] - 1
         startingCol = cell[1] - 1
         neighbors = set()
         for row in range(startingRow, startingRow + 3):
             for col in range(startingCol, startingCol + 3):
-                coord  = (row, col)
+                coord = (row, col)
                 if self.is_valid_coord(coord) and coord != cell:
                     neighbors.add(coord)
         return neighbors
@@ -243,7 +242,6 @@ class MinesweeperAI():
         elif coord[0] >= self.height or coord[1] >= self.width:
             return False
         return True
-    
 
     def make_safe_move(self):
         """
@@ -260,7 +258,6 @@ class MinesweeperAI():
         except KeyError:
             return None
 
-
     def make_random_move(self):
         """
         Returns a move to make on the Minesweeper board.
@@ -271,9 +268,8 @@ class MinesweeperAI():
         valid_moves = set()
         for row in range(0, self.height):
             for col in range(0, self.width):
-                valid_moves.add((row,col))
+                valid_moves.add((row, col))
         try:
             return valid_moves.difference(self.moves_made).difference(self.mines).pop()
         except KeyError:
             return None
-            
