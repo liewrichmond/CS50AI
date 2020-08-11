@@ -58,7 +58,12 @@ def transition_model(corpus, page, damping_factor):
     a link at random chosen from all pages in the corpus.
     """
     prob_dist = {}
-    random_pick = (1-damping_factor) * (1/len(corpus))
+    random_pick = 0
+
+    if len(corpus[page]) == 0:
+        random_pick = 1/len(corpus)
+    else:
+        random_pick = (1-damping_factor) * (1/len(corpus))
 
     for pg in corpus:
         prob_dist[pg] = random_pick
@@ -78,7 +83,39 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    page = random.choice(list(corpus))
+    pagerank = {}
+
+    for pg in corpus:
+        pagerank[pg] = 0
+
+    for i in range(0, n):
+        prob_dist = transition_model(corpus, page, damping_factor)
+        page = get_page(prob_dist)
+        pagerank[page] += 1
+
+    for pg in corpus:
+        pagerank[pg] = pagerank[pg]/n
+
+    check_sum(pagerank)
+
+    return pagerank
+
+
+def get_page(prob_dist):
+    """
+    Returns a random page based on the given probability distribution.
+    """
+    if len(prob_dist) == 0:
+        raise ValueError
+    r = random.random()
+    start = 0
+    end = 0
+    for prob in prob_dist:
+        end += prob_dist[prob]
+        if start <= r and r < end:
+            return prob
+        start = end
 
 
 def iterate_pagerank(corpus, damping_factor):
@@ -90,8 +127,57 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    pagerank = {}
+    
+    # initialize values for pageranks
+    for pg in corpus:
+        pagerank[pg] = 1/(len(corpus))
 
+    new_pr = get_new_pr(corpus, damping_factor, pagerank)
+
+    while not has_converged(pagerank, new_pr):
+        pagerank = new_pr
+        new_pr = get_new_pr(corpus, damping_factor, pagerank)
+    check_sum(pagerank)
+
+    return pagerank
+
+def get_new_pr(corpus, damping_factor, pagerank):
+    new_pr = {}
+    
+    for pg in pagerank:
+        s = find_sum(corpus, pagerank, pg)
+        new_pr[pg] = (1-damping_factor) * (1/len(corpus)) + (damping_factor * s)
+    check_sum(new_pr)
+    return new_pr
+
+def check_sum(pagerank):
+    s = 0
+    for pg in pagerank:
+        s += pagerank[pg]
+    if s - 1 > 0.0001:
+        raise ValueError
+
+
+def has_converged(pr1, pr2):
+    if list(pr1) != list(pr2):
+        raise ValueError
+    for pg in pr1:
+        larger = max(pr1[pg], pr2[pg])
+        smaller = min(pr1[pg], pr2[pg])
+        if larger - smaller > 0.001:
+            return False
+    return True
+
+
+def find_sum(corpus, pagerank, target_page):
+    s = 0
+    for pg in corpus:
+        if len(corpus[pg]) == 0:
+            s += (1/len(corpus))*pagerank[pg]
+        if target_page in corpus[pg]:
+            s += pagerank[pg]/len(corpus[pg])
+    return s
 
 if __name__ == "__main__":
     main()
