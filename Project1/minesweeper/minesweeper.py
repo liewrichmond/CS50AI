@@ -224,6 +224,9 @@ class MinesweeperAI():
                     self.mark_safe(safe)
 
     def get_neighbors(self, cell):
+        """
+        Returns a set of neighbors of a given cell.
+        """
         if cell[0] < 0 or cell[1] < 0:
             raise ValueError
         startingRow = cell[0] - 1
@@ -237,6 +240,9 @@ class MinesweeperAI():
         return neighbors
 
     def is_valid_coord(self, coord):
+        """
+        Returns a boolean depending on the coordinate passed into the function
+        """
         if coord[0] < 0 or coord[1] < 0:
             return False
         elif coord[0] >= self.height or coord[1] >= self.width:
