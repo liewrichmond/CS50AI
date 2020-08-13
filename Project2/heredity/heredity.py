@@ -139,7 +139,60 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
     """
-    raise NotImplementedError
+    parents = dict()
+    children = dict()
+    
+    #sort children and parents
+    for person in people:
+        node = {
+            "gene" : 0,
+            "trait": False,
+            "probability": 0,
+        }
+        
+        if person in one_gene:
+            node["gene"] = 1
+        elif person in two_genes:
+            node["gene"] = 2
+        else:
+            node["gene"] = 0
+
+        if person in have_trait:
+            node["trait"] = True
+        else:
+            node["trait"] = False
+
+        if people[person]['mother'] == None and people[person]['father'] == None:
+            parents[person] = node
+        else:
+            node["mother"] = people[person]['mother']
+            node["father"] = people[person]['father']
+            children[person] = node
+    
+    #calculate probability for parents
+    for parent in parents:
+        n_gene = parents[parent]["gene"]
+        p_gene = PROBS["gene"][n_gene]
+        p_trait = PROBS["trait"][n_gene][parents[parent]["trait"]]
+        parents[parent]["probability"] = p_gene * p_trait
+
+    #calculate probability for kids
+    for child in children:
+        n_gene = children[child]["gene"]
+        mother = children[child]["mother"]
+        father = children[child]["father"]
+        
+            
+                
+
+
+        
+    #calculate joint probabilities
+    
+
+
+    return no_gene
+    
 
 
 def update(probabilities, one_gene, two_genes, have_trait, p):

@@ -225,7 +225,7 @@ class MinesweeperAI():
 
     def get_neighbors(self, cell):
         """
-        Returns a set of neighbors of a given cell.
+        Returns a set of cells that are within one row and one column of a given cell.
         """
         if cell[0] < 0 or cell[1] < 0:
             raise ValueError
