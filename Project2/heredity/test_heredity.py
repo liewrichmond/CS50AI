@@ -7,6 +7,6 @@ def test_test():
 def test_heredity_returns_zero_prob():
     people = load_data("Project2//heredity//data//family0.csv")
     actual = joint_probability(people, {"Harry"}, {"James"}, {"James"})
-    expected = {"Lily"}
+    expected = 0.0026643247488
     assert expected == actual
 

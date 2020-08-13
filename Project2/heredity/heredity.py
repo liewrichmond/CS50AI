@@ -141,58 +141,58 @@ def joint_probability(people, one_gene, two_genes, have_trait):
     """
     parents = dict()
     children = dict()
-    
-    #sort children and parents
+
+    # sort children and parents
     for person in people:
         node = {
-            "gene" : 0,
-            "trait": False,
-            "probability": 0,
+            "gene" : (1 if person in one_gene else
+                      2 if person in two_genes else 0),
+            "trait" : (True if person in have_trait else False)
         }
-        
-        if person in one_gene:
-            node["gene"] = 1
-        elif person in two_genes:
-            node["gene"] = 2
-        else:
-            node["gene"] = 0
-
-        if person in have_trait:
-            node["trait"] = True
-        else:
-            node["trait"] = False
-
         if people[person]['mother'] == None and people[person]['father'] == None:
             parents[person] = node
         else:
             node["mother"] = people[person]['mother']
             node["father"] = people[person]['father']
             children[person] = node
-    
-    #calculate probability for parents
+
+    # calculate probability for parents
     for parent in parents:
         n_gene = parents[parent]["gene"]
         p_gene = PROBS["gene"][n_gene]
         p_trait = PROBS["trait"][n_gene][parents[parent]["trait"]]
         parents[parent]["probability"] = p_gene * p_trait
 
-    #calculate probability for kids
+    # calculate probability for kids
     for child in children:
         n_gene = children[child]["gene"]
         mother = children[child]["mother"]
         father = children[child]["father"]
-        
-            
-                
 
+        p_transfer_m = (0.99 if parents[mother]["gene"] != 0 else 0.01)
+        p_no_transfer_m = 1 - p_transfer_m
+        p_transfer_f = (0.99 if parents[father]["gene"] != 0 else 0.01)
+        p_no_transfer_f = 1 - p_transfer_f
 
-        
-    #calculate joint probabilities
-    
+        p_gene = 0
+        if n_gene == 0:
+            p_gene = p_no_transfer_m * p_no_transfer_f
+        elif n_gene == 1:
+            p_gene = (p_no_transfer_f * p_transfer_m) + \
+                (p_transfer_f * p_no_transfer_m)
+        else:
+            p_gene = p_transfer_f * p_transfer_m
 
+        p_trait = PROBS["trait"][n_gene][children[child]["trait"]]
+        children[child]["probability"] = p_gene * p_trait
 
-    return no_gene
-    
+    # calculate joint probabilities
+    probability = 1
+    for parent in parents:
+        probability *= parents[parent]["probability"]
+    for child in children:
+        probability *= children[child]["probability"]
+    return probability
 
 
 def update(probabilities, one_gene, two_genes, have_trait, p):
