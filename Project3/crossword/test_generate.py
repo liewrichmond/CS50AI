@@ -63,3 +63,38 @@ def test_ac3():
     assert creator.domains[down_5] == {"SEVEN"}
     assert creator.domains[acrross_4] == {"NINE"}
     assert creator.domains[down_4] == {"FIVE", "NINE"}
+
+
+def test_order_domain_values():
+    crossword = Crossword("./Project3/crossword/data/structure0.txt",
+                          "./Project3/crossword/data/words0.txt")
+    creator = CrosswordCreator(crossword)
+    creator.enforce_node_consistency()
+    creator.ac3()
+    across_3 = Variable(0, 1, 'across', 3)
+    creator.order_domain_values(across_3, dict())
+
+def test_order_domain_values_2():
+    crossword = Crossword("./Project3/crossword/data/test.txt",
+                          "./Project3/crossword/data/test_words.txt")
+    creator = CrosswordCreator(crossword)
+    creator.enforce_node_consistency()
+    across_3 = Variable(0, 0, 'across', 3)
+    expected = ['BAT','DAT','CAT']
+    actual = creator.order_domain_values(across_3, dict())
+    assert expected == actual
+
+def test_select_unassigned_variable():
+    crossword = Crossword("./Project3/crossword/data/test.txt",
+                          "./Project3/crossword/data/test_words.txt")
+    creator = CrosswordCreator(crossword)
+    creator.enforce_node_consistency()
+    actual = creator.select_unassigned_variable(dict())
+    expected = Variable(0, 0, 'across', 3)
+    assert expected == actual
+
+def test_solve():
+    crossword = Crossword("./Project3/crossword/data/structure0.txt",
+                          "./Project3/crossword/data/words0.txt")
+    creator = CrosswordCreator(crossword)
+    creator.solve()
