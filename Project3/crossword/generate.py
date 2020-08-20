@@ -1,5 +1,5 @@
 import sys
-
+import queue
 from crossword import *
 
 
@@ -114,7 +114,21 @@ class CrosswordCreator():
         Return True if a revision was made to the domain of `x`; return
         False if no revision was made.
         """
-        raise NotImplementedError
+        revised = False
+        if(self.crossword.overlaps[x, y]) == None:
+            return revised
+        else:
+            words_copy = self.domains[x].copy()
+            (x_index, y_index) = self.crossword.overlaps[x, y]
+            for x_word in words_copy:
+                count = 0
+                for y_word in self.domains[y]:
+                    if x_word[x_index] == y_word[y_index]:
+                        count += 1
+                if count == 0:
+                    self.domains[x].remove(x_word)
+                    revised = True
+        return revised
 
     def ac3(self, arcs=None):
         """
@@ -125,7 +139,18 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        raise NotImplementedError
+        q = queue.Queue()
+        for pair in self.crossword.overlaps:
+            q.put(pair)
+        while not q.empty():
+            (x, y) = q.get()
+            if self.revise(x, y):
+                if len(self.domains[x]) == 0:
+                    return False
+                for neighbor in self.crossword.neighbors(x):
+                    if neighbor != y:
+                        q.put((neighbor, x))
+        return True
 
     def assignment_complete(self, assignment):
         """
