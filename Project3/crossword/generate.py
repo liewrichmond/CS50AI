@@ -222,15 +222,13 @@ class CrosswordCreator():
             except KeyError:
                 count[len(self.domains[var])] = 0
 
-
         if sorted(count)[0] == 0:
             return sorted(d, key=lambda v: d[v])[0]
 
         for var in vars:
             d[var] = len(self.crossword.neighbors(var))
-            
-        return sorted(d, key=lambda v: d[v])[0]
 
+        return sorted(d, key=lambda v: d[v])[0]
 
     def backtrack(self, assignment):
         """
