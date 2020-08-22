@@ -1,6 +1,7 @@
 import csv
 import sys
 import ast
+import collections
 
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
@@ -117,7 +118,10 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    neigh = KNeighborsClassifier(n_neighbors=1)
+    neigh.fit(evidence, labels)
+    return neigh
+
 
 
 def evaluate(labels, predictions):
@@ -135,8 +139,28 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    if len(predictions) != len(labels):
+        raise ValueError
+    
+    pred_pos = 0
+    actual_pos = 0
 
+    pred_neg = 0
+    actual_neg = 0
+    for i in range(0, len(labels)):
+        if labels[i] == 1:
+            actual_pos += 1
+            if predictions[i] == 1:
+                pred_pos += 1
+        else:
+            actual_neg += 1
+            if predictions[i] == 0:
+                pred_neg += 1
+
+    sensitivity = pred_pos/actual_pos
+    specificity = pred_neg/actual_neg
+
+    return (sensitivity, specificity)
 
 if __name__ == "__main__":
     main()
