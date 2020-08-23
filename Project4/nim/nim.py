@@ -102,10 +102,9 @@ class NimAI():
         If no Q-value exists yet in `self.q`, return 0.
         """
         try:
-            return self.q[(state,action)]
+            return self.q[(tuple(state), action)]
         except KeyError:
             return 0
-        
 
     def update_q_value(self, state, action, old_q, reward, future_rewards):
         """
@@ -122,7 +121,8 @@ class NimAI():
         `alpha` is the learning rate, and `new value estimate`
         is the sum of the current reward and estimated future rewards.
         """
-        self.q[(state,action)] = old_q + self.alpha * ((reward + future_rewards) - old_q) 
+        self.q[(tuple(state), action)] = old_q + self.alpha * \
+            ((reward + future_rewards) - old_q)
 
     def best_future_reward(self, state):
         """
@@ -134,8 +134,20 @@ class NimAI():
         Q-value in `self.q`. If there are no available actions in
         `state`, return 0.
         """
-        
-        raise NotImplementedError
+        rewards = list()
+        actions = Nim.available_actions(state)
+
+        if len(actions) == 0:
+            return 0
+
+        for action in actions:
+            try:
+                future_reward = self.q[(tuple(state), action)]
+                rewards.append(future_reward)
+            except KeyError:
+                rewards.append(0)
+
+        return max(rewards)
 
     def choose_action(self, state, epsilon=True):
         """
@@ -152,7 +164,41 @@ class NimAI():
         If multiple actions have the same Q-value, any of those
         options is an acceptable return value.
         """
-        raise NotImplementedError
+        r = random.random()
+
+        if r <= self.epsilon and epsilon:
+            # return random move
+            return self.get_random_move(state)
+
+        else:
+            # get best
+            actions = Nim.available_actions(state)
+            best_reward = 0
+            best_action = tuple()
+            for action in actions:
+                try:
+                    reward = self.q[tuple(state), action]
+                    if reward > best_reward:
+                        best_reward = reward
+                        best_action = action
+                except KeyError:
+                    continue
+
+            if best_action == tuple():
+                best_action = self.get_random_move(state)
+
+            return best_action
+
+    def get_random_move(self, state):
+        row = random.randrange(0, len(state))
+        if state[row] != 0:
+            try:
+                n = random.randrange(1, state[row])
+            except ValueError:
+                n = 1
+            return (row, n)
+        else:
+            return self.get_random_move(state)
 
 
 def train(n):
