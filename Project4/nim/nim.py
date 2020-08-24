@@ -174,23 +174,21 @@ class NimAI():
             # get best
             actions = Nim.available_actions(state)
             best_reward = -math.inf
-            rewards = dict()
+            rewards = set()
             for action in actions:
                 try:
                     reward = self.q[tuple(state), action]
                 except KeyError:
                     reward = 0
                 
-                try:
-                    rewards[reward].add(action)
-                except KeyError:
-                    rewards[reward] = set()
-                    rewards[reward].add(action)
-
                 if reward > best_reward:
                     best_reward = reward
+                    rewards = set()
+                    rewards.add(action)
+                elif reward == best_reward:
+                    rewards.add(action)
 
-            return rewards[best_reward].pop()
+            return rewards.pop()
 
     def get_random_move(self, state):
         actions = Nim.available_actions(state)
