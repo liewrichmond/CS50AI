@@ -173,32 +173,28 @@ class NimAI():
         else:
             # get best
             actions = Nim.available_actions(state)
-            best_reward = 0
-            best_action = tuple()
+            best_reward = -math.inf
+            rewards = dict()
             for action in actions:
                 try:
                     reward = self.q[tuple(state), action]
-                    if reward > best_reward:
-                        best_reward = reward
-                        best_action = action
                 except KeyError:
-                    continue
+                    reward = 0
+                
+                try:
+                    rewards[reward].add(action)
+                except KeyError:
+                    rewards[reward] = set()
+                    rewards[reward].add(action)
 
-            if best_action == tuple():
-                best_action = self.get_random_move(state)
+                if reward > best_reward:
+                    best_reward = reward
 
-            return best_action
+            return rewards[best_reward].pop()
 
     def get_random_move(self, state):
-        row = random.randrange(0, len(state))
-        if state[row] != 0:
-            try:
-                n = random.randrange(1, state[row])
-            except ValueError:
-                n = 1
-            return (row, n)
-        else:
-            return self.get_random_move(state)
+        actions = Nim.available_actions(state)
+        return actions.pop()
 
 
 def train(n):
