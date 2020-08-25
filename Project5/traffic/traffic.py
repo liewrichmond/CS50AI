@@ -58,11 +58,18 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
-    for label in range(0, NUM_CATEGORIES):
-        for i_file in os.listdir(os.path.join(data_dir,  str(label))):
-            #open file and process w/ opencv
-            img = cv2.imread(os.path.join(data_dir, str(label) i_file))
-            img.resize(IMG_HEIGHT, IMG_WIDTH)
+    images = list()
+    labels = list()
+    for label in os.listdir(data_dir):
+        if not label.startswith('.'):
+            for i_file in os.listdir(os.path.join(data_dir,  str(label))):
+                # open file and process w/ opencv
+                img = cv2.imread(os.path.join(data_dir, str(label), i_file))
+                img.resize(IMG_HEIGHT, IMG_WIDTH, 3)
+                images.append(np.array(img))
+                labels.append(label)
+    return (images, labels)
+
 
 def get_model():
     """
@@ -70,7 +77,49 @@ def get_model():
     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
-    raise NotImplementedError
+    model = tf.keras.models.Sequential(
+        [
+            tf.keras.layers.Conv2D(
+                32, (3, 3), activation="relu", input_shape=(30, 30, 3)
+            ),
+
+            # Max-pooling layer, using 2x2 pool size
+            tf.keras.layers.MaxPool2D(pool_size=(3, 3)),
+
+            tf.keras.layers.Conv2D(64, (2, 2), activation="relu"),
+
+            # Max-pooling layer, using 2x2 pool size
+            tf.keras.layers.MaxPool2D(pool_size=(2, 2)),
+
+            tf.keras.layers.Conv2D(128, (2, 2), activation="relu"),
+
+            # Max-pooling layer, using 2x2 pool size
+            tf.keras.layers.MaxPool2D(pool_size=(2, 2)),
+
+            # Flatten units
+            tf.keras.layers.Flatten(),
+
+            # Add a hidden layer with dropout
+            tf.keras.layers.Dense(512, activation="relu"),
+            tf.keras.layers.Dropout(0.1),
+            tf.keras.layers.Dense(512, activation="relu"),
+            tf.keras.layers.Dropout(0.1),
+            tf.keras.layers.Dense(512, activation="relu"),
+            tf.keras.layers.Dropout(0.1),
+
+
+            # Add an output layer with output units for all 10 digits
+            tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
+        ]
+    )
+
+    model.compile(
+        optimizer="adam",
+        loss="categorical_crossentropy",
+        metrics=["accuracy"]
+    )
+
+    return model
 
 
 if __name__ == "__main__":
