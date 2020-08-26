@@ -6,7 +6,7 @@ import tensorflow as tf
 
 from sklearn.model_selection import train_test_split
 
-EPOCHS = 10
+EPOCHS = 15
 IMG_WIDTH = 30
 IMG_HEIGHT = 30
 NUM_CATEGORIES = 43
@@ -80,38 +80,32 @@ def get_model():
     model = tf.keras.models.Sequential(
         [
             tf.keras.layers.Conv2D(
-                32, (3, 3), activation="relu", input_shape=(30, 30, 3)
+                32, (3, 3), activation="relu", input_shape=(30, 30, 3), padding='same'
             ),
-
-            # Max-pooling layer, using 2x2 pool size
-            tf.keras.layers.MaxPool2D(pool_size=(3, 3)),
-
-            tf.keras.layers.Conv2D(64, (2, 2), activation="relu"),
-
-            # Max-pooling layer, using 2x2 pool size
+            tf.keras.layers.Conv2D(32, (3, 3), activation="relu"),
             tf.keras.layers.MaxPool2D(pool_size=(2, 2)),
 
-            tf.keras.layers.Conv2D(128, (2, 2), activation="relu"),
-
-            # Max-pooling layer, using 2x2 pool size
+            tf.keras.layers.Conv2D(64, (3, 3), activation="relu", padding='same'),
+            tf.keras.layers.Conv2D(64, (3, 3), activation="relu"),
             tf.keras.layers.MaxPool2D(pool_size=(2, 2)),
+
+            tf.keras.layers.Conv2D(128, (3, 3), activation="relu", padding='same'),
+            tf.keras.layers.Conv2D(128, (3, 3), activation="relu"),
+            tf.keras.layers.MaxPool2D(pool_size=(2, 2)),    
 
             # Flatten units
             tf.keras.layers.Flatten(),
-
+ 
             # Add a hidden layer with dropout
+            # 512 neurons, 0.1 dropout works best
             tf.keras.layers.Dense(512, activation="relu"),
             tf.keras.layers.Dropout(0.1),
-            tf.keras.layers.Dense(512, activation="relu"),
-            tf.keras.layers.Dropout(0.1),
-            tf.keras.layers.Dense(512, activation="relu"),
-            tf.keras.layers.Dropout(0.1),
-
-
+   
             # Add an output layer with output units for all 10 digits
             tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
         ]
     )
+
 
     model.compile(
         optimizer="adam",
